@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorrow Framework Specification v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0a0a12;
+    --accent: #2B4FFF;
+    --accent-dim: #1a3acc;
+    --light-accent: #eef1ff;
+    --mid-accent: #c5ccff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --rule: #dde0f0;
+    --mono-bg: #f0f2ff;
+    --white: #ffffff;
+    --warm: #fffdf7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,18,0.96);
+    backdrop-filter: blur(12px);
+    padding: 0 4vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    border-bottom: 1px solid rgba(43,79,255,0.3);
+  }
+
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--white);
+    letter-spacing: 0.08em;
+  }
+
+  .nav-brand span {
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--dark);
+    padding: 120px 4vw 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -10%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(43,79,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: 'LORROW';
+    position: absolute;
+    right: -2rem;
+    bottom: -1rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(8rem, 20vw, 18rem);
+    color: rgba(255,255,255,0.03);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .hero-inner {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 7.5rem);
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    margin-bottom: 2rem;
+  }
+
+  .hero-sub {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2.5rem;
+    max-width: 60%;
+  }
+
+  .hero-body {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 60%;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .pill {
+    background: rgba(43,79,255,0.15);
+    border: 1px solid rgba(43,79,255,0.3);
+    color: var(--mid-accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+  }
+
+  /* MAIN LAYOUT */
+  .layout {
+    width: 100%;
+    padding: 4rem 4vw;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 4rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem 5vw;
+    }
+    .sidebar { display: none; }
+  }
+
+  /* SIDEBAR TOC */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+  }
+
+  .toc-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    border-left: 2px solid var(--rule);
+  }
+
+  .toc-list li a {
+    display: block;
+    padding: 0.35rem 0 0.35rem 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    line-height: 1.4;
+  }
+
+  .toc-list li a:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* CONTENT */
+  .content {
+    min-width: 0;
+  }
+
+  .content section {
+    margin-bottom: 5rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  h1.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    color: var(--dark);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--accent);
+  }
+
+  h2.sub-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    color: var(--dark);
+    margin: 2.5rem 0 0.75rem;
+  }
+
+  h3.sub-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 1.75rem 0 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  p {
+    color: #2a2a3e;
+    margin-bottom: 1rem;
+    font-size: 0.975rem;
+    line-height: 1.8;
+    overflow-wrap: break-word;
+  }
+
+  .note {
+    background: var(--light-accent);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .note p {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--accent-dim);
+    margin: 0;
+  }
+
+  /* MONO BLOCKS */
+  .mono-block {
+    background: var(--mono-bg);
+    border: 1px solid var(--mid-accent);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .mono-block code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: #1a3acc;
+    display: block;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* TABLES */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    max-width: 100%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 700px) {
+    table { min-width: 540px; }
+    .table-wrap { border-color: var(--mid-accent); }
+  }
+
+  thead tr {
+    background: var(--dark);
+  }
+
+  thead th {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    padding: 0.85rem 1rem;
+    text-align: left;
+  }
+
+  tbody tr:nth-child(odd) { background: var(--light-accent); }
+  tbody tr:nth-child(even) { background: var(--white); }
+
+  tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: top;
+    color: #2a2a3e;
+    border-bottom: 1px solid var(--rule);
+    line-height: 1.6;
+  }
+
+  tbody td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--accent-dim);
+    overflow-wrap: break-word;
+  }
+
+  .range {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: #444;
+  }
+
+  /* LIFECYCLE TABLE */
+  .state-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    background: var(--mono-bg);
+    border: 1px solid var(--mid-accent);
+    color: var(--accent-dim);
+  }
+
+  /* CONSTANTS TABLE */
+  .const-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* BULLET LIST */
+  ul.spec-list {
+    list-style: none;
+    margin: 1rem 0;
+  }
+
+  ul.spec-list li {
+    padding: 0.4rem 0 0.4rem 1.5rem;
+    position: relative;
+    font-size: 0.95rem;
+    color: #2a2a3e;
+    line-height: 1.7;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  ul.spec-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 2.5rem 4vw;
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(43,79,255,0.2);
+  }
+
+  footer strong {
+    color: rgba(255,255,255,0.8);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* LAYER CARDS */
+  .layers {
+    background: var(--dark);
+    padding: 0 4vw 4rem;
+  }
+  .layers-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 800px) {
+    .layers-inner { grid-template-columns: 1fr; }
+  }
+  .layer-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(43,79,255,0.25);
+    border-radius: 6px;
+    padding: 1.5rem;
+  }
+  .layer-card h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .layer-card h4 span { color: var(--accent); }
+  .layer-card p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* PRINT */
+  @media print {
+    nav, .sidebar { display: none; }
+    .hero { padding-top: 2rem; }
+    .layout { grid-template-columns: 1fr; }
+    body { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">LO<span>RR</span>OW</div>
+  <ul class="nav-links">
+    <li><a href="#principles">Principles</a></li>
+    <li><a href="#variables">Variables</a></li>
+    <li><a href="#lifecycle">Lifecycle</a></li>
+    <li><a href="#default">Default</a></li>
+    <li><a href="#guardrails">Guardrails</a></li>
+    <li><a href="#profile">Profile</a></li>
+    <li><a href="#compatibility">Compatibility</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Framework Specification v1.0</div>
+    <h1 class="hero-title">LORROW</h1>
+    <p class="hero-sub">A Standard Framework for Bilateral Collateralized Lending</p>
+    <p class="hero-body">Lorrow is not a lending product. It is a standard that lending protocols implement around. It defines a common grammar for bilateral, fixed-term, collateralized lending: the variables, lifecycle states, escrow model, and default rules that let any user read any Lorrow loan in a common format, on any chain, in any interface.</p>
+    <p class="hero-body">Like a token standard, Lorrow does not dictate what a protocol is for or how it prices risk. It defines what must be common so that loans stay legible and borrowers stay protected, while leaving each implementation free to set its own parameters and publish them.</p>
+    <div class="hero-pills">
+      <span class="pill">Core</span>
+      <span class="pill">Profile</span>
+      <span class="pill">Compatibility</span>
+      <span class="pill">Non-Predatory by Design</span>
+      <span class="pill">Chain Agnostic</span>
+      <span class="pill">Open Standard</span>
+    </div>
+  </div>
+</div>
+
+<div class="layers">
+  <div class="layers-inner">
+    <div class="layer-card">
+      <h4>Lorrow <span>Core</span></h4>
+      <p>What must be common. The standardized variables, six lifecycle states, required functions and events, the escrow model, and the non-negotiable user protections including surplus return and the anti-predation guardrails. Every compatible implementation preserves Core exactly.</p>
+    </div>
+    <div class="layer-card">
+      <h4>Lorrow <span>Profile</span></h4>
+      <p>What each implementation customizes. Each protocol publishes an Implementation Profile declaring its chain, assets, oracle policy, risk parameters, fee model, admin controls, and more. The profile is mandatory. The answers are the implementation's own, within Core's outer bounds.</p>
+    </div>
+    <div class="layer-card">
+      <h4>Lorrow <span>Compatibility</span></h4>
+      <p>The claim a protocol earns by preserving Core and publishing a complete Profile. "Lorrow-compatible" means a user can read the terms, lifecycle, escrow model, breach and default process, and commitment signals in the common format, even where risk rules differ.</p>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#principles">1. Design Principles</a></li>
+      <li><a href="#roles">2. Protocol Roles</a></li>
+      <li><a href="#variables">3. Loan Variables</a></li>
+      <li><a href="#commitment">4. Commitment Model</a></li>
+      <li><a href="#lifecycle">5. Loan Lifecycle</a></li>
+      <li><a href="#contract">6. Escrow Contract Spec</a></li>
+      <li><a href="#default">7. Default &amp; Breach</a></li>
+      <li><a href="#score">8. Commitment Score</a></li>
+      <li><a href="#orderbook">9. Order Book Design</a></li>
+      <li><a href="#guardrails">10. Core Guardrails</a></li>
+      <li><a href="#profile">11. Implementation Profile</a></li>
+      <li><a href="#compatibility">12. Lorrow Compatibility</a></li>
+      <li><a href="#implementation">13. Implementation Notes</a></li>
+      <li><a href="#outofscope">14. Out of Scope</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <!-- 1 -->
+    <section id="principles">
+      <div class="section-label">Section 01</div>
+      <h1 class="section-title">Design Principles</h1>
+      <p>Lorrow is built on five principles that every implementation must preserve. These are not preferences. They are the standard.</p>
+
+      <h2 class="sub-title">A Standard, Not a Product</h2>
+      <p>Lorrow defines the common nouns, verbs, states, and disclosures of bilateral lending. It does not dictate every risk parameter. Other protocols implement around it and declare themselves Lorrow-compatible, the same way tokens declare themselves compatible with a token standard. This preserves flexibility while forcing transparency.</p>
+
+      <h2 class="sub-title">Bilateral Agreement</h2>
+      <p>Every loan is a direct agreement between a specific lender and a specific borrower. There are no pools, no anonymous counterparties, and no protocol-set rates. One party posts terms. The other accepts. The deal is between them.</p>
+
+      <h2 class="sub-title">Immutable Terms</h2>
+      <p>Once a loan agreement is created on-chain, no variable can be modified by either party or by the protocol. The terms agreed at origination are the terms enforced at maturity. There are no repricing events, no governance votes that affect live loans, and no admin keys that can alter an active agreement.</p>
+
+      <h2 class="sub-title">Standardized Variables</h2>
+      <p>Every loan on every Lorrow implementation uses exactly the same set of variables. No custom fields. No implementation-specific terms that one party can use to obscure risk. A lender or borrower who understands the variable set can read any loan on any chain running Lorrow.</p>
+
+      <h2 class="sub-title">Transparent Commitment</h2>
+      <p>Capital and collateral locking is visible and rated. A party who locks funds at posting signals stronger commitment than one who does not. The protocol surfaces this difference so counterparties can make informed decisions. Over time, a wallet builds a verifiable on-chain credit history.</p>
+    </section>
+
+    <!-- 2 -->
+    <section id="roles">
+      <div class="section-label">Section 02</div>
+      <h1 class="section-title">Protocol Roles</h1>
+
+      <h2 class="sub-title">Lender</h2>
+      <p>A lender is any wallet that posts an offer to extend credit or accepts a borrower's posted request. The lender provides the loan asset and receives interest in return. The lender bears the risk of borrower default, mitigated by the collateral escrow.</p>
+
+      <h2 class="sub-title">Borrower</h2>
+      <p>A borrower is any wallet that posts a request for credit or accepts a lender's posted offer. The borrower provides collateral, receives the loan asset, and is obligated to repay principal plus accrued interest according to the agreed repayment structure.</p>
+
+      <h2 class="sub-title">Protocol</h2>
+      <p>The protocol is the smart contract. It holds escrowed collateral, disburses loan assets at origination, enforces repayment schedules, monitors collateral value against the breach threshold, and executes default transfers. The protocol has no discretion. It executes the terms as written.</p>
+
+      <div class="note"><p>Lorrow does not define who operates a frontend, who provides price oracle data, or who deploys the contract. Those are implementation decisions. The protocol defines only the mechanics that any compliant implementation must enforce.</p></div>
+    </section>
+
+    <!-- 3 -->
+    <section id="variables">
+      <div class="section-label">Section 03</div>
+      <h1 class="section-title">Loan Variables <span style="font-size:0.5em;color:var(--accent);font-family:'IBM Plex Mono',monospace;vertical-align:middle;">CORE</span></h1>
+      <p>The following variables define every Lorrow loan. All are required. None can be added, removed, or renamed by an implementation. A loan object that does not contain all of these fields exactly is not a valid Lorrow loan. Where a range is shown, it is the Core outer bound. Each implementation sets its own narrower range inside it and publishes it in its Profile.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Set By</th>
+              <th>Core Bound</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>loan_asset</td><td>Poster</td><td class="range">Profile-defined</td><td>The asset the borrower receives. Each implementation defines its supported asset list in its Profile.</td></tr>
+            <tr><td>loan_amount</td><td>Poster</td><td class="range">&gt; 0</td><td>The principal amount denominated in the loan asset.</td></tr>
+            <tr><td>collateral_asset</td><td>Poster</td><td class="range">Profile-defined</td><td>The asset the borrower pledges. Must be distinct from the loan asset.</td></tr>
+            <tr><td>collateral_amount</td><td>Poster</td><td class="range">&gt; 0</td><td>The amount of collateral escrowed. LTV is derived and displayed but not directly set.</td></tr>
+            <tr><td>breach_threshold</td><td>Poster</td><td class="range">Min 110%</td><td>The collateral-to-outstanding-principal ratio below which a breach begins. Core sets a hard floor of 110%. Profile sets the range above it.</td></tr>
+            <tr><td>loan_term</td><td>Poster</td><td class="range">Fixed set</td><td>14d / 30d / 60d / 90d / 12m / 18m. An implementation may support a subset but may not invent new terms.</td></tr>
+            <tr><td>interest_rate</td><td>Poster</td><td class="range">0% to 36%</td><td>Fixed annual rate on outstanding principal. Core sets a hard ceiling of 36%. Profile sets the band within it.</td></tr>
+            <tr><td>repayment_structure</td><td>Poster</td><td class="range">LUMP / INSTALLMENT / BALLOON</td><td>LUMP: principal plus interest at maturity. INSTALLMENT: equal payments over term. BALLOON: interest-only during term, principal at maturity.</td></tr>
+            <tr><td>early_repayment_allowed</td><td>Poster</td><td class="range">true / false</td><td>Whether the borrower may repay before maturity. If false, the contract rejects early repayment.</td></tr>
+            <tr><td>early_repayment_penalty</td><td>Poster</td><td class="range">0% to 5%</td><td>Percentage of outstanding principal charged on early repayment. Core sets a hard ceiling of 5%. Only valid if early_repayment_allowed is true.</td></tr>
+            <tr><td>capital_locked</td><td>Poster</td><td class="range">true / false</td><td>Whether the lender has escrowed the loan asset at posting. Affects Commitment Score.</td></tr>
+            <tr><td>collateral_locked</td><td>Poster</td><td class="range">true / false</td><td>Whether the borrower has escrowed collateral at posting. Affects Commitment Score.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note"><p>LTV is a derived display value only. LTV = loan_amount divided by current collateral value. It is shown to both parties before acceptance but is not stored as a loan variable. The stored variables are loan_amount and collateral_amount.</p></div>
+    </section>
+
+    <!-- 4 -->
+    <section id="commitment">
+      <div class="section-label">Section 04</div>
+      <h1 class="section-title">Commitment Model</h1>
+      <p>Every post on Lorrow is either locked or unlocked. This applies to both lenders and borrowers.</p>
+
+      <h2 class="sub-title">Locked Post</h2>
+      <p>A lender who posts locked has escrowed the loan asset into the protocol contract at the time of posting. The funds are held and unavailable to the lender until a borrower accepts or the lender cancels. Cancellation returns funds immediately.</p>
+      <p>A borrower who posts locked has escrowed the collateral into the protocol contract at the time of posting. The collateral is held until a lender accepts or the borrower cancels.</p>
+
+      <h2 class="sub-title">Unlocked Post</h2>
+      <p>An unlocked post is a statement of intent. The capital or collateral is not escrowed until the moment of acceptance. When a counterparty accepts an unlocked post, the contract attempts to pull the required funds from the poster's wallet. If the funds are not present or approval is not granted, the acceptance fails and the post is invalidated.</p>
+
+      <div class="note"><p>Unlocked posts are valid and useful, particularly for large positions where locking capital speculatively carries opportunity cost. The protocol does not discourage them. It simply surfaces the difference.</p></div>
+
+      <h2 class="sub-title">Effect on Commitment Score</h2>
+      <p>Locked posts contribute positively to a wallet's Commitment Score. Unlocked posts that result in failed acceptance contribute negatively. See Section 8 for full scoring mechanics.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="lifecycle">
+      <div class="section-label">Section 05</div>
+      <h1 class="section-title">Loan Lifecycle</h1>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>State</th><th>Trigger</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="state-badge">POSTED</span></td><td>Lender or borrower submits terms to order book</td><td>Post visible on order book. Capital or collateral escrowed if locked post.</td></tr>
+            <tr><td><span class="state-badge">ACTIVE</span></td><td>Counterparty accepts posted terms</td><td>Contract created on-chain. Capital disbursed to borrower. Collateral held in escrow. Loan clock starts. Repayment schedule running. Collateral monitored against breach threshold.</td></tr>
+            <tr><td><span class="state-badge">BREACHED</span></td><td>Collateral value falls below breach_threshold</td><td>Breach clock starts, sized by loan term. Borrower can cure by paying down, or collateral can recover. Recovery above threshold resets the clock to zero.</td></tr>
+            <tr><td><span class="state-badge">DEFAULTED</span></td><td>Breach clock runs full window while continuously below threshold, or borrower fails to repay past maturity grace period</td><td>Collateral valued. Debt portion transferred to lender. Surplus returned to borrower. Loan closed. Recorded in both wallet histories.</td></tr>
+            <tr><td><span class="state-badge">COMPLETED</span></td><td>Borrower repays in full, at or before maturity</td><td>Principal plus accrued interest plus early penalty if applicable returned to lender. Collateral returned to borrower. Loan closed in good standing. Early closure noted by a flag on the record.</td></tr>
+            <tr><td><span class="state-badge">EXPIRED</span></td><td>Locked post cancelled, or unlocked post acceptance fails</td><td>Escrowed funds returned. Post removed from order book.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="contract">
+      <div class="section-label">Section 06</div>
+      <h1 class="section-title">Escrow Contract Spec</h1>
+      <p>The following defines the required behavior of a compliant Lorrow escrow contract. Implementation language, chain, and framework are left to the builder.</p>
+
+      <h2 class="sub-title">Required Functions</h2>
+
+      <h3 class="sub-sub">postOffer(params)</h3>
+      <p>Called by a lender. Accepts all loan variables. If capital_locked is true, pulls loan_amount of loan_asset from the caller's wallet into escrow. Emits OfferPosted event.</p>
+
+      <h3 class="sub-sub">postRequest(params)</h3>
+      <p>Called by a borrower. Accepts all loan variables. If collateral_locked is true, pulls collateral_amount of collateral_asset from the caller's wallet into escrow. Emits RequestPosted event.</p>
+
+      <h3 class="sub-sub">acceptOffer(offerId)</h3>
+      <p>Called by a borrower. Pulls collateral from borrower if not already locked. Pulls capital from lender if not already locked. Creates loan record. Disburses loan_amount to borrower. Starts loan clock. Emits LoanCreated event.</p>
+
+      <h3 class="sub-sub">acceptRequest(requestId)</h3>
+      <p>Called by a lender. Pulls capital from lender if not already locked. Pulls collateral from borrower if not already locked. Creates loan record. Disburses loan_amount to borrower. Starts loan clock. Emits LoanCreated event.</p>
+
+      <h3 class="sub-sub">repay(loanId, amount)</h3>
+      <p>Called by borrower. Accepts full or partial payment for any repayment structure. A partial payment reduces outstanding principal and, where the collateral ratio was in breach, can cure it. For INSTALLMENT loans, payments are validated against the stored schedule. If the payment closes the loan before maturity and early_repayment_allowed is false, the contract reverts. If early repayment is allowed, the contract adds accrued interest plus the early penalty if any. On full repayment the contract releases collateral to the borrower and moves the loan to COMPLETED.</p>
+
+      <h3 class="sub-sub">reportBreach(loanId)</h3>
+      <p>Called by a lender or an automated keeper. If the collateral ratio is below breach_threshold and the loan is not already BREACHED, moves the loan to BREACHED and starts the breach clock sized by loan term. Emits BreachTriggered.</p>
+
+      <h3 class="sub-sub">checkRecovery(loanId)</h3>
+      <p>Called by anyone, or run by a keeper. If a BREACHED loan's collateral ratio has returned above breach_threshold, resets the breach clock and returns the loan to ACTIVE. Emits BreachCleared.</p>
+
+      <h3 class="sub-sub">executeDefault(loanId)</h3>
+      <p>Called by a lender or keeper. Valid only if the breach clock has run its full window while the collateral stayed continuously below threshold, or if the loan is past its maturity grace period unpaid. The contract values the collateral, transfers the portion covering outstanding principal plus accrued interest to the lender, and returns any surplus collateral to the borrower. Moves the loan to DEFAULTED. Emits LoanDefaulted.</p>
+
+      <h3 class="sub-sub">cancelPost(postId)</h3>
+      <p>Called by poster. Only valid if post has not been accepted. Returns any escrowed funds to poster. Removes post from order book. Emits PostCancelled event.</p>
+
+      <h2 class="sub-title">Required Events</h2>
+      <div class="mono-block"><code>OfferPosted(offerId, lender, params, locked)
+RequestPosted(requestId, borrower, params, locked)
+LoanCreated(loanId, lender, borrower, params, timestamp)
+RepaymentMade(loanId, amount, remainingPrincipal, timestamp)
+BreachTriggered(loanId, collateralValue, threshold, windowSeconds, timestamp)
+BreachCleared(loanId, collateralValue, timestamp)
+LoanDefaulted(loanId, debtToLender, surplusToBorrower, timestamp)
+LoanCompleted(loanId, totalInterestPaid, earlyClosure, timestamp)
+PostCancelled(postId, fundsReturned, timestamp)</code></div>
+
+      <h2 class="sub-title">Loan Record Structure</h2>
+      <div class="mono-block"><code>loanId:                     bytes32
+lender:                     address
+borrower:                   address
+loan_asset:                 address
+loan_amount:                uint256
+collateral_asset:           address
+collateral_amount:          uint256
+breach_threshold:           uint16     // basis points, e.g. 12000 = 120%
+loan_term:                  uint32     // seconds
+interest_rate:              uint16     // basis points annually
+repayment_structure:        uint8      // 0=LUMP 1=INSTALLMENT 2=BALLOON
+early_repayment_allowed:    bool
+early_repayment_penalty:    uint16     // basis points
+capital_locked_at_post:     bool
+collateral_locked_at_post:  bool
+origination_timestamp:      uint256
+maturity_timestamp:         uint256
+outstanding_principal:      uint256
+state:                      uint8      // 0=POSTED 1=ACTIVE 2=BREACHED
+                                       // 3=DEFAULTED 4=COMPLETED 5=EXPIRED
+breach_clock_start:         uint256    // 0 if not breached
+breach_window:              uint32     // seconds, derived from loan_term
+closed_early:               bool       // true if COMPLETED before maturity</code></div>
+    </section>
+
+    <!-- 7 -->
+    <section id="default">
+      <div class="section-label">Section 07</div>
+      <h1 class="section-title">Default &amp; Breach Handling</h1>
+
+      <h2 class="sub-title">The Breach Window</h2>
+      <p>When the market value of escrowed collateral falls below the agreed breach_threshold percentage of outstanding principal, the loan moves to BREACHED and a single breach clock begins. The length of that clock is fixed by the protocol and sized to the loan term. Shorter loans resolve faster because there is little time for recovery anyway. Longer loans get more room because multi-day price dips over a year or more are expected noise.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Loan Term</th><th>Breach Window</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>14 days</td><td class="const-val">1 day</td></tr>
+            <tr><td>30, 60, 90 days</td><td class="const-val">3 days</td></tr>
+            <tr><td>12 months, 18 months</td><td class="const-val">6 days</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="sub-title">Cure and Recovery</h2>
+      <p>During the breach window the loan can return to good standing two ways. The borrower can cure by paying down principal until the collateral ratio rises back above the breach_threshold. Or the collateral price can recover on its own back above the threshold. Either way, the moment the ratio is restored the breach clock resets to zero and the loan returns to ACTIVE.</p>
+      <p>This means the window measures continuous time below threshold, not cumulative time. A price wick that dips under the line and recovers does not consume the window. Only a sustained decline that stays below threshold for the full window length leads to default. This protects borrowers from flash crashes while still protecting lenders from real, sustained collateral erosion.</p>
+      <p>A cure payment is not early repayment. It does not trigger the early_repayment_penalty regardless of the loan terms. It is treated purely as a principal reduction.</p>
+
+      <h2 class="sub-title">Default and Surplus Return</h2>
+      <p>If the breach clock runs its full window while the collateral stays continuously below threshold, default executes. The contract values the collateral, transfers the portion covering outstanding principal plus accrued interest to the lender, and returns any remaining collateral to the borrower.</p>
+      <p>The lender is made whole, not enriched. They recover what they are owed and no more. If the collateral at default is worth less than the debt, the lender absorbs the shortfall and the borrower owes nothing further. This downside is the lender's primary risk and should be priced into the breach_threshold and interest_rate they post.</p>
+
+      <h2 class="sub-title">Maturity Default</h2>
+      <p>If the borrower has not repaid in full by the maturity timestamp, a 3-day maturity grace period begins. If the loan is still unpaid at the end of it, the lender or a keeper may call executeDefault. The same valuation and surplus-return mechanics apply: lender takes the debt portion of the collateral, borrower receives any surplus.</p>
+
+      <div class="note"><p>Implementations must define their oracle source. Lorrow does not mandate a specific oracle. Any implementation must use the same oracle source for breach detection, recovery detection, and LTV display so the three are always consistent.</p></div>
+    </section>
+
+    <!-- 8 -->
+    <section id="score">
+      <div class="section-label">Section 08</div>
+      <h1 class="section-title">Commitment Score</h1>
+      <p>Every wallet that participates in Lorrow accumulates a Commitment Score. This score is on-chain, public, and derived entirely from verifiable loan history. It is not subjective and cannot be gamed through off-chain activity.</p>
+
+      <h2 class="sub-title">Score Components</h2>
+
+      <h3 class="sub-sub">Locked Post Ratio</h3>
+      <p>The percentage of a wallet's total posts that were locked. Higher is better. A wallet that always posts locked has a ratio of 1.0.</p>
+
+      <h3 class="sub-sub">Completion Rate</h3>
+      <p>The percentage of accepted loans that reached COMPLETED state without default. Calculated separately for lender and borrower activity.</p>
+
+      <h3 class="sub-sub">Breach Recovery Rate</h3>
+      <p>Of the times a wallet's loans entered BREACHED, the share that returned to ACTIVE through cure or recovery rather than proceeding to default. Only applicable to borrower history. A high rate signals a borrower who actively manages collateral.</p>
+
+      <h3 class="sub-sub">Failed Acceptance Rate</h3>
+      <p>The percentage of unlocked posts that failed at acceptance due to insufficient funds. High failure rate signals unreliable posting behavior and reduces score significantly.</p>
+
+      <h3 class="sub-sub">Loan Volume</h3>
+      <p>Total lifetime loan volume in USD terms. Larger volume provides more signal. A wallet with 100 completed loans carries more weight than one with 2.</p>
+
+      <h2 class="sub-title">Score Display</h2>
+      <p>Implementations should display Commitment Score visibly on every order book listing. The score is a signal to the counterparty, not a gate. There is no minimum score required to post or accept. The market decides how much weight to give it.</p>
+
+      <div class="note"><p>Lorrow defines the inputs to Commitment Score but does not mandate a specific formula or weighting. Implementations may weight components differently. The inputs themselves are standardized so scores remain meaningful across implementations that use the same formula.</p></div>
+    </section>
+
+    <!-- 9 -->
+    <section id="orderbook">
+      <div class="section-label">Section 09</div>
+      <h1 class="section-title">Order Book Design</h1>
+      <p>Lorrow uses a dual order book. Lender offers and borrower requests are posted and displayed separately. There is no algorithmic matching. A counterparty browses the relevant book and selects terms they accept.</p>
+
+      <h2 class="sub-title">Lender Order Book</h2>
+      <p>Displays all open lender offers. Each entry shows all loan variables, the lender's Commitment Score, whether the post is locked, and the current LTV derived from live collateral pricing.</p>
+
+      <h2 class="sub-title">Borrower Order Book</h2>
+      <p>Displays all open borrower requests. Each entry shows all loan variables, the borrower's Commitment Score, whether the post is locked, and the current LTV.</p>
+
+      <h2 class="sub-title">No Counter-Offer Mechanic</h2>
+      <p>Lorrow does not support counter-offers or negotiation. A counterparty either accepts the posted terms exactly or does not. This is intentional. Counter-offer mechanics introduce complexity, delay, and the possibility of terms drift that undermines the immutability principle.</p>
+
+      <h2 class="sub-title">Filtering</h2>
+      <p>Implementations should provide filtering by loan asset, collateral asset, loan term, interest rate range, breach threshold, repayment structure, locked status, and Commitment Score minimum. Filtering is a UI concern and not defined by the protocol.</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="guardrails">
+      <div class="section-label">Section 10</div>
+      <h1 class="section-title">Core Guardrails</h1>
+      <p>These are the non-negotiable protections that make a protocol Lorrow-compatible. They are fixed in Core. No implementation may relax, override, or remove them. They exist for one reason: no Lorrow-compatible protocol should ever be able to be predatory. An implementation may always be more generous to the borrower than these bounds require. It may never be harsher.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Guardrail</th><th>Core Rule</th><th>Why It Protects Users</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Surplus Return</td><td class="const-val">Mandatory</td><td>At default the lender takes only the debt owed. All surplus collateral returns to the borrower. Seizing surplus is the single most predatory move in collateralized lending, so it is forbidden at the Core level.</td></tr>
+            <tr><td>Interest Rate Ceiling</td><td class="const-val">36% hard</td><td>No loan on any compatible protocol may charge more. Aligned with recognized usury and hard money limits.</td></tr>
+            <tr><td>Early Penalty Ceiling</td><td class="const-val">5% hard</td><td>Above this a penalty traps borrowers rather than compensating lenders.</td></tr>
+            <tr><td>Breach Threshold Floor</td><td class="const-val">110% hard</td><td>Below this a borrower could be defaulted while still roughly solvent. The floor guarantees a real buffer.</td></tr>
+            <tr><td>Breach Window Floors</td><td class="const-val">1d / 3d / 6d</td><td>A compatible protocol may give borrowers more time to cure or recover, but never less than these per-term minimums. Prevents unfair flash defaults.</td></tr>
+            <tr><td>Maturity Grace Floor</td><td class="const-val">3 days min</td><td>No protocol may default a borrower the instant a loan matures. Profiles may offer more.</td></tr>
+            <tr><td>Recovery Resets Clock</td><td class="const-val">Mandatory</td><td>Any return above threshold during a breach window resets the clock. Protects borrowers from wicks and flash crashes.</td></tr>
+            <tr><td>Immutable Terms</td><td class="const-val">Mandatory</td><td>No party and no admin may alter an active loan's terms. What was agreed is what is enforced.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note"><p>Everything not listed here is a Profile parameter. An implementation sets it, within these bounds, and publishes it. The guardrails are the floor of user protection. The Profile is where each protocol expresses its own risk appetite above that floor.</p></div>
+    </section>
+
+    <!-- 11 -->
+    <section id="profile">
+      <div class="section-label">Section 11</div>
+      <h1 class="section-title">The Implementation Profile</h1>
+      <p>Every Lorrow-compatible protocol must publish an Implementation Profile. The Profile is how a protocol declares the choices Core leaves open. It must be public, machine-readable, and linked from the protocol's interface so any user can read it before they post or accept a loan. A protocol that does not publish a complete Profile is not Lorrow-compatible, regardless of how its contract behaves.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Profile Field</th><th>What It Declares</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Protocol Name</td><td>The implementation's name and version.</td></tr>
+            <tr><td>Chain / VM</td><td>The chain or virtual machine the contract runs on.</td></tr>
+            <tr><td>Supported Loan Assets</td><td>The exact list of assets that may be borrowed.</td></tr>
+            <tr><td>Supported Collateral Assets</td><td>The exact list of assets that may be pledged.</td></tr>
+            <tr><td>Collateral Ratio Range</td><td>The implementation's breach_threshold range, at or above the 110% Core floor.</td></tr>
+            <tr><td>Interest Rate Range</td><td>The implementation's allowed rate band, at or below the 36% Core ceiling.</td></tr>
+            <tr><td>Oracle Provider</td><td>The price oracle used for collateral valuation, breach detection, and LTV display.</td></tr>
+            <tr><td>Oracle Fallback Policy</td><td>The secondary source or procedure if the primary oracle is unavailable.</td></tr>
+            <tr><td>Oracle Failure Behavior</td><td>What the protocol does when no reliable price is available. The Core-recommended default is to pause breach detection without freezing active loans.</td></tr>
+            <tr><td>Default Settlement Method</td><td>How collateral is valued and transferred at default, and how surplus is returned.</td></tr>
+            <tr><td>Liquidation Method, if any</td><td>Whether any mechanism beyond the standard breach-and-default flow exists, and how it works.</td></tr>
+            <tr><td>Maturity Grace Period</td><td>The grace period offered, at or above the 3-day Core floor.</td></tr>
+            <tr><td>Breach Window Policy</td><td>The breach windows per term, at or above the Core floors.</td></tr>
+            <tr><td>Commitment Score Formula</td><td>How the standardized Score inputs are weighted into a final score.</td></tr>
+            <tr><td>Fee Model</td><td>Whether a protocol fee is charged, its size in basis points, and its recipient.</td></tr>
+            <tr><td>Upgradeability / Admin</td><td>What admin controls or upgrade mechanisms exist, and their limits. Active loans must remain immutable regardless.</td></tr>
+            <tr><td>Compliance / KYC Posture</td><td>Any identity, KYC, or AML requirements imposed on participants.</td></tr>
+            <tr><td>Keeper Model</td><td>Who runs breach detection and default execution, and whether it is open or permissioned.</td></tr>
+            <tr><td>Frontend / Operator</td><td>Who operates the interface and any operator disclosures.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="compatibility">
+      <div class="section-label">Section 12</div>
+      <h1 class="section-title">Lorrow Compatibility</h1>
+      <p>A protocol is Lorrow-compatible when it satisfies two conditions, both required.</p>
+
+      <h2 class="sub-title">It Preserves Core</h2>
+      <p>The contract uses the standardized loan variables without addition, removal, or renaming. It implements the six lifecycle states and the required functions and events. It enforces the escrow model. And it honors every Core Guardrail, including surplus return and the anti-predation bounds. A user who understands Lorrow can read any loan on the protocol in the common format.</p>
+
+      <h2 class="sub-title">It Publishes a Complete Profile</h2>
+      <p>The protocol publishes a public, complete Implementation Profile covering every field in Section 11. Nothing material is left undisclosed. A user can see, before acting, exactly how this implementation handles the choices Core leaves open.</p>
+
+      <h2 class="sub-title">What the Claim Means</h2>
+      <p>"Lorrow-compatible" is a promise to the user: the loan terms, lifecycle, escrow model, breach and default process, and commitment signals are legible in a common format, and the protocol's specific risk rules are fully disclosed. It does not mean two compatible protocols share the same risk parameters. It means a user can read and compare them on equal footing, and that neither can be predatory within the meaning of the Core Guardrails.</p>
+
+      <div class="note"><p>Compatibility is self-declared and verifiable. Because Core behavior is on-chain and the Profile is public, anyone can check a protocol's claim against its contract and its disclosures. Lorrow defines no central authority that grants or revokes the label.</p></div>
+    </section>
+
+    <!-- 13 -->
+    <section id="implementation">
+      <div class="section-label">Section 13</div>
+      <h1 class="section-title">Implementation Notes</h1>
+
+      <h2 class="sub-title">Chain Agnosticism</h2>
+      <p>Lorrow is designed to be implemented on any chain that supports smart contracts and escrow mechanics. EVM chains, Solana, Cosmos app chains, and others are all valid targets. The protocol does not reference chain-specific primitives in its specification.</p>
+
+      <h2 class="sub-title">Asset Support</h2>
+      <p>Each implementation defines its own supported asset list for both loan assets and collateral assets. The protocol recommends starting with stablecoins as loan assets to eliminate loan asset price risk for the lender. Collateral assets should be liquid, widely held, and have reliable oracle pricing available.</p>
+
+      <h2 class="sub-title">Oracle Requirements</h2>
+      <p>Breach detection requires reliable price data for collateral assets. Implementations must specify their oracle source and use it consistently for both breach monitoring and LTV display. A recommended safe default is to pause breach detection but not freeze active loans if oracle data becomes unavailable.</p>
+
+      <h2 class="sub-title">Interest Calculation</h2>
+      <p>Interest accrues on outstanding principal from the origination timestamp. For INSTALLMENT repayment structure, each installment amount is calculated at origination based on the fixed rate and term and stored in the loan record. Implementations must not recalculate installment amounts after origination.</p>
+      <p>For early repayment, accrued interest is calculated as: annual_rate divided by 365, multiplied by days elapsed, multiplied by outstanding principal at the time of repayment.</p>
+
+      <h2 class="sub-title">Keeper Bots</h2>
+      <p>The breach detection and default execution functions can be called by any wallet. Implementations may choose to run keeper bots that monitor active loans and call these functions automatically. The contract must not depend on a specific keeper for correct behavior.</p>
+
+      <h2 class="sub-title">Frontend Independence</h2>
+      <p>The protocol does not define a frontend. Any interface that correctly reads from and writes to a compliant Lorrow contract is a valid Lorrow frontend. Multiple competing frontends can serve the same contract.</p>
+
+      <h2 class="sub-title">Optional Fee Hook</h2>
+      <p>Lorrow does not require a protocol fee. Implementations that want one should expose a single fee hook applied at origination as a basis-point cut of the loan amount, with a recipient address set at deployment. The fee must be visible to both parties before acceptance and must not exceed 100 basis points so it never materially distorts the agreed terms. Implementations with no fee set the hook to zero.</p>
+    </section>
+
+    <!-- 12 -->
+    <section id="outofscope">
+      <div class="section-label">Section 14</div>
+      <h1 class="section-title">What Lorrow Does Not Define</h1>
+      <p>Lorrow draws a deliberate line. Some things it leaves to each implementation but requires to be disclosed in the Profile. Other things it places entirely outside its scope. Both are intentional. Neither is an omission.</p>
+
+      <h2 class="sub-title">Left to the Profile, but Must Be Disclosed</h2>
+      <p>The chain or VM, the supported assets, the oracle provider and its fallback and failure behavior, the specific risk ranges within Core's bounds, the Commitment Score weighting, the fee model, the admin and upgrade controls, the KYC posture, and the keeper model. Each implementation chooses these and publishes them in its Implementation Profile. Core does not dictate the answers. It only requires that they be declared.</p>
+
+      <h2 class="sub-title">Outside Lorrow's Scope Entirely</h2>
+      <ul class="spec-list">
+        <li>Legal enforceability or jurisdictional compliance of any loan</li>
+        <li>Insurance or external loss protection mechanisms</li>
+        <li>Multi-collateral or cross-margin loan structures</li>
+        <li>Undercollateralized or pure reputation-based lending</li>
+        <li>Secondary markets for transferring or trading active loans</li>
+        <li>Any central authority that grants or revokes the compatibility label</li>
+      </ul>
+
+      <div class="note"><p>The discipline of the standard is in the line itself. Core protects users and keeps loans legible. The Profile forces transparency on everything else. What falls outside both is left to builders, markets, and jurisdictions to settle on their own.</p></div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <strong>LORROW</strong><br><br>
+  Framework Specification v1.0 &nbsp;&middot;&nbsp; A Standard for Bilateral Collateralized Lending &nbsp;&middot;&nbsp; Originated by WHYSIDEAS &nbsp;&middot;&nbsp; Open for implementation
+</footer>
+
+</body>
+</html>
